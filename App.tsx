@@ -36,6 +36,7 @@ const App: React.FC = () => {
   const [isBooting, setIsBooting] = useState(true);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [vectors, setVectors] = useState<string[]>([]);
+  const [isExecuting, setIsExecuting] = useState(false);
   const outputRef = useRef<HTMLDivElement>(null);
 
   const addLog = useCallback((message: string, type: LogEntry['type'] = 'info') => {
@@ -47,9 +48,9 @@ const App: React.FC = () => {
   useEffect(() => {
     const sequence = [
       { msg: "INITIALIZING VERCEL DEPLOYMENT CONTEXT...", type: 'system' },
-      { msg: "LOADING HEURISTIC ENGINE v2.3.0...", type: 'system' },
+      { msg: "LOADING HEURISTIC ENGINE v2.3.1...", type: 'system' },
       { msg: "MEMORY CHECK: OK. NETWORK: SECURE.", type: 'system' },
-      { msg: "SYSTEM READY. AWAITING INPUT.", type: 'success' }
+      { msg: "SYSTEM READY. AWAITING PARAMETERS.", type: 'success' }
     ];
     
     let timeout: number;
@@ -75,6 +76,10 @@ const App: React.FC = () => {
   const executeSearch = useCallback(() => {
     if (!input.trim() || isBooting) return;
 
+    // Visual feedback for execution
+    setIsExecuting(true);
+    setTimeout(() => setIsExecuting(false), 300);
+
     const rawTerm = input;
     const cleanTerm = SearchEngineCore.sanitizeInput(rawTerm);
     const isSafe = SearchEngineCore.isSyntaxSafe(cleanTerm);
@@ -85,7 +90,7 @@ const App: React.FC = () => {
     if (rawTerm !== cleanTerm) addLog("AUTO-CLEAN: REMOVED NON-PRINTABLE CHARS", "warning");
     if (!isSafe) addLog("SYNTAX WARNING: UNBALANCED PARENTHESES ENCOUNTERED", "warning");
 
-    // --- PRESERVED LOGIC CORE (DO NOT MODIFY) ---
+    // --- RESTORED LOGIC CORE (Original 257 limit) ---
     const wordCount = processedTerm.split(' ').length;
     let o = Math.max(32 - wordCount, 1);
     const template = 'site:*.*.%NUM%.* |';
@@ -108,9 +113,9 @@ const App: React.FC = () => {
     addLog(`PRIMARY VECTOR LAUNCHING...`, 'info');
 
     const win = window.open(generatedUrls[0], '_blank', 'noopener,noreferrer');
-    if (!win) addLog("BLOCK ALERT: BROWSER PREVENTED AUTO-LAUNCH. USE DATA CELLS BELOW.", "warning");
+    if (!win) addLog("BLOCK ALERT: BROWSER PREVENTED AUTO-LAUNCH. USE DATA CELLS.", "warning");
 
-    setInput('');
+    // Input remains for editing
   }, [input, isBooting, addLog]);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -123,7 +128,7 @@ const App: React.FC = () => {
       
       <header className="flex justify-between items-center mb-6 border-b border-[#00ff00]/30 pb-4">
         <div className="crt-glow font-bold text-lg md:text-xl tracking-tighter">
-          CYBER-SEARCH//TERMINAL_v2.3.0
+          CYBER-SEARCH//TERMINAL_v2.3.1
         </div>
         <div className="text-[10px] text-[#00ff00]/60 hidden md:block uppercase tracking-widest">
           Status: <span className={isBooting ? "text-yellow-500 animate-pulse" : "text-green-400"}>
@@ -141,7 +146,7 @@ const App: React.FC = () => {
             onKeyDown={handleKeyPress}
             disabled={isBooting}
             placeholder={isBooting ? "SYSTEM BOOTING..." : "ENTER TARGET PARAMETERS..."}
-            className="w-full bg-black/50 border border-[#00ff00] text-[#00ff00] p-3 outline-none focus:bg-[#003300]/10 placeholder:text-[#00ff00]/20 transition-colors font-mono"
+            className={`w-full bg-black/50 border ${isExecuting ? 'border-white shadow-[0_0_15px_white]' : 'border-[#00ff00]'} text-[#00ff00] p-3 outline-none focus:bg-[#003300]/10 placeholder:text-[#00ff00]/20 transition-all font-mono duration-300`}
           />
           {!input && !isBooting && <span className="absolute right-4 top-3 text-[#00ff00]/40 pointer-events-none">_</span>}
         </div>
