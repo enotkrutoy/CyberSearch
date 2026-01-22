@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CyberSearch Terminal v2.3.1 | Stable</title>
+  <title>CyberSearch Terminal v2.5.0 | Stable</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @keyframes scan { 0% { top: -10%; } 100% { top: 110%; } }
@@ -13,8 +13,8 @@
     .scan-line {
       position: fixed;
       top: 0; width: 100%; height: 2px;
-      background: rgba(0, 255, 0, 0.1);
-      animation: scan 6s linear infinite;
+      background: rgba(0, 255, 0, 0.05);
+      animation: scan 8s linear infinite;
       pointer-events: none;
       z-index: 50;
     }
@@ -40,8 +40,27 @@
       vertical-align: middle;
       margin-left: 4px;
     }
+    /* Custom Range Styling */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: transparent;
+    }
+    input[type=range]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 2px;
+      background: rgba(0, 255, 0, 0.2);
+      border: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 12px;
+      width: 12px;
+      background: #00ff00;
+      margin-top: -5px;
+      cursor: pointer;
+    }
     body {
-      background-color: #050505;
+      background-color: #030303;
       color: #00ff00;
       font-family: 'Courier New', Courier, monospace;
     }
